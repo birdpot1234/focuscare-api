@@ -2,8 +2,13 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const Register = require('./Register/routes');
-//skdmskldmkda
+const Register = require('./src/authen/routes');
+const connectDB = require('./connect_config');
+// import { createApi } from './src';
+
+require('./connect'); // use knex
+
+
 
 
 ////Body parser 
@@ -16,6 +21,9 @@ app.use(bodyParser.json({ limit: 1024 * 1024 * 2000, type: 'application/json' })
 
 
 app.use("/", Register);
+
+
+
 app.get('/', (req, res) => {
     res.render('index');
 })

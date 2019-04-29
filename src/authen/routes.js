@@ -17,7 +17,7 @@ router.post('/login',
 )
 
 router.post('/token',
-    validate_token(),
+    validate_token(), //
     (req, res) => {
         console.log(req.user_id, req.macaddress)
         res.status(200).json({ success: true })

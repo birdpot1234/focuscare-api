@@ -31,6 +31,28 @@ class authenModel {
             expDate: moment(data.expDate).format('YYYY-MM-DD HH:mm:ss')
         }).where({ userId: data.userId })
     }
+    async registerDplus(data) {
+       
+       let date = moment().format("YYYY-MM-DD");
+       let datetime = moment().local('th').format("YYYY-MM-DD HH:mm:ss");
+       let user_id = moment().unix();
+       let varluetb = {
+            user_id:user_id,
+            ...data,
+            birthDay:date,
+            createRegisdate:datetime,
+            roleLevel:0,
+            typeRegis:99
+        }
+      
+
+           
+
+        return knex('tbl_user').insert(varluetb)
+   
+    }
+
+
 }
 
 module.exports = new authenModel();

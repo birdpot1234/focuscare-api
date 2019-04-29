@@ -12,8 +12,10 @@
   "dependencies": {
     "express": "^4.16.4",
     "knex": "^0.16.5",
+    "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "mysql": "^2.17.0",
-    "mysql2": "^1.6.5"
+    "mysql2": "^1.6.5",
+    "nodemon": "^1.18.11"
   }
 }

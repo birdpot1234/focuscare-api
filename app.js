@@ -1,8 +1,11 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const cookie = require('cookie-session');
+const cors = require('cors');
 const bodyParser = require('body-parser');
-const createApi = require('./src/index')
+const createApi = require('./src/index');
+const constant = require('./src/constant')
 // const Register = require('./src/authen/routes');
 const connectDB = require('./connect_config');
 // import { createApi } from './src';
@@ -10,8 +13,22 @@ const connectDB = require('./connect_config');
 require('moment/locale/th')
 require('./connect'); // use knex
 
+const corsOption = {
+    optionsSuccessStatus: 200,
+    preflightContinue: true,
+    credentials: true
+}
 
-
+app.use(cors(corsOption));
+app.use(cookie({
+    name: constant.name,
+    keys: [constant.key],
+    maxAge: 8 * 60 * 60 * 1000,
+    cookie: {
+        httpOnly: true,
+        secure: true
+    }
+}))
 
 ////Body parser 
 app.use(morgan('dev'));

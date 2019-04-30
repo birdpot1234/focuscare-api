@@ -31,26 +31,30 @@ class authenModel {
             expDate: moment(data.expDate).format('YYYY-MM-DD HH:mm:ss')
         }).where({ userId: data.userId })
     }
-    async registerDplus(data) {
-       
+    async registerDplus(data,password) {
+      
        let date = moment().format("YYYY-MM-DD");
        let datetime = moment().local('th').format("YYYY-MM-DD HH:mm:ss");
        let user_id = moment().unix();
        let varluetb = {
             user_id:user_id,
             ...data,
+            password:password,
             birthDay:date,
             createRegisdate:datetime,
             roleLevel:0,
             typeRegis:99
         }
       
+console.log(varluetb)
 
-           
-
-        return knex('tbl_user').insert(varluetb)
+      return knex('tbl_user').insert(varluetb)
    
     }
+    async getPassword(typeRegis,username){
+        return knex('tbl_user').where({ typeRegis, username });
+    }
+
 
 
 }

@@ -23,5 +23,17 @@ router.post('/login',
         res.status(200).json({ success: req.success, message: req.message, token: req.token })
     }
 )
+router.post('/checkUser',
+    Regist.checkUser(),
+    (req, res) => {
+        res.status(200).json({ success: req.success, message:req.message})
+    }
+)
+// router.post('/hashPassword',
+//     Regist.hashPassword(),
+//     (req, res) => {
+//         res.status(200).json({ success: req.success, message:req.message})
+//     }
+// )
 
 module.exports = router

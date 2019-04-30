@@ -18,8 +18,26 @@ const contro = {
       });
     callback(server_response(200, "Success", {}))
   }
-}
 
+
+}
+const register = () => async (req, res, next) => {
+  let data = req.body;
+  
+  try {
+    
+    await authenModel.registerDplus(req.body);
+    req.success = true;
+    req.message = "เข้าสู่ระบบสำเร็จ";
+ 
+    next();
+  } catch (error) {
+    console.log(error)
+    res.status(400).json(server_response(400))
+  }
+
+  
+}
 const login = () => async (req, res, next) => {
   let { typeRegis, username, macaddress = "02:00:00:00:00:00" } = req.body;
   let duplicate = await authenModel.checkDuplicateUser({ typeRegis, username });
@@ -57,5 +75,6 @@ const login = () => async (req, res, next) => {
 
 module.exports = {
   contro: contro,
-  login
+  login,
+  register
 }

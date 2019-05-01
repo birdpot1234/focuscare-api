@@ -11,6 +11,7 @@ exports.validate_token = () => {
                 } else {
                     req.user_id = decode.user_id;
                     req.macaddress = decode.macaddress;
+                    console.log(req.user_id, req.macaddress)
                     next();
                 }
             })

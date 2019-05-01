@@ -20,7 +20,15 @@ router.post("/register",
 router.post('/login',
     Regist.login(),
     (req, res) => {
-        res.status(200).json({ success: req.success, message: req.message, token: req.token })
+        res.status(200).json({ success: req.success, message: req.message, result: { token: req.token } })
+    }
+)
+
+router.post('/logout',
+    validate_token(),
+    (req, res) => {
+        req.session.token = null
+        res.status(200).json({ success: true, message: 'ออกจากระบบสำเร็จ' })
     }
 )
 router.post('/checkUser',

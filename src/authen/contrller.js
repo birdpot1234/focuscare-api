@@ -21,46 +21,40 @@ const contro = {
       });
     callback(server_response(200, "Success", {}))
   }
-
-
 }
 
-const checkUser =() =>async(req,res,next ) =>{
-  let {typeRegis,username} = req.body;
+const checkUser = () => async (req, res, next) => {
+  let { typeRegis, username } = req.body;
   let password = 'AA22';
   let objPassword = await authenModel.getPassword(typeRegis, username);
-  let decyp = await decrypted(password,objPassword[0].password);
+  let decyp = await decrypted(password, objPassword[0].password);
   console.log(decyp)
   next()
-
-
-
 }
 
-const decrypted = async(password,password_Indb,req,res)=>{
+const decrypted = async (password, password_Indb, req, res) => {
   let resoult = null
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(resoult)
     }, 500);
-    bcrypt.compare(password, password_Indb,(err, isMatch)=>{
-      if(err){
+    bcrypt.compare(password, password_Indb, (err, isMatch) => {
+      if (err) {
         console.log(err)
         res.status(400).json(server_response(400))
-      }else if(isMatch===true){
+      } else if (isMatch === true) {
         resoult = true;
-  
-      }else{
-  
-        resoult = false;
-        
-      }
-  });
-  })
 
+      } else {
+
+        resoult = false;
+
+      }
+    });
+  })
 }
 
-const encrypted = async(password,res)=>{
+const encrypted = async (password, res) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve("")
@@ -81,14 +75,12 @@ const encrypted = async(password,res)=>{
       }
     })
   })
-
 }
+
+/*####################### CONTROLLER #######################*/
 const register = () => async (req, res, next) => {
-
-
   try {
     await encrypted(req.body.password);
-  
     await authenModel.registerDplus(req.body, pass_encrypted);
     req.success = true;
     req.message = "ลงทะเบียนสำเร็จ";
@@ -98,77 +90,86 @@ const register = () => async (req, res, next) => {
     console.log(error)
     res.status(400).json(server_response(400))
   }
-
-
 }
+
 const login = () => async (req, res, next) => {
-  let { typeRegis, username,password, macaddress = "02:00:00:00:00:00" } = req.body;
-  
+  let { typeRegis, username, password, macaddress, tokennoti } = req.body;
   let duplicate = await authenModel.checkDuplicateUser({ typeRegis, username });
   let objToken = {};
- 
-  if (+typeRegis === 0) { // focus
-    console.log('typeRegis:',typeRegis)
+
+  if (+typeRegis === 0) { // ######################### FOCUS #########################
+    console.log('typeRegis:', typeRegis)
     try {
       let objPassword = await authenModel.getPassword(typeRegis, username);
-      let decyp = await decrypted(password,objPassword[0].password);
+      let decyp = await decrypted(password, objPassword[0].password);
       console.log(decyp)
-      if(decyp)
-      {
+      if (decyp) {
         req.success = true;
         req.message = "เข้าสู่ระบบสำเร็จ";
+        objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
+        req.user_id = objPassword[0].user_id;
       }
-      else{
+      else {
         console.log('password Incorect')
-         req.success = false;
-         req.message = "passwor Incorect";
-        
-   
+        req.success = false;
+        req.message = "passwor Incorect";
       }
     } catch (error) {
       console.log(error)
-      req.success = false
       res.status(400).json(server_response(400))
     }
-   
-   
   } else if (+typeRegis === 1) { // ######################### FACEBOOK #########################
     try {
       if (duplicate.length > 0) { // have username
-        
         // update tbl_deviceinfo => change user_id 
         let { user_id } = duplicate[0];
         await authenModel.updateFacebook({ ...req.body.facebook, userId: user_id })
         objToken = { user_id, macaddress } // เอาไว้ Generate Token
         req.success = true;
+        req.user_id = user_id;
         req.message = "เข้าสู่ระบบสำเร็จ";
       } else {
-        let result = await authenModel.insertUser({ ...req.body }) // return facebook id
+        let result = await authenModel.insertUser({ ...req.body, tokennoti }) // return facebook id
         objToken = { user_id: result, macaddress } // เอาไว้ Generate Token
         await authenModel.insertFacebook({ ...req.body.facebook, userId: result })
         req.success = true;
+        req.user_id = result;
         req.message = "เข้าสู่ระบบสำเร็จ";
       }
     } catch (error) {
       console.log(error)
-      req.success = false
       res.status(400).json(server_response(400))
     }
   }
 
   // generate token
-  if (req.success ) {
+  if (req.success) {
     req.token = jsonwebtoken.sign(objToken, constant.sign, { expiresIn: '8h' });
     req.session.token = req.token;
-  
   }
   next();
+}
 
+const updateToken = () => async (req, res, next) => {
+  if (req.success) {
+    let { tokennoti } = req.body
+    let { token, user_id } = req;
+    try {
+      await authenModel.updateToken({ token, tokennoti, user_id });
+      next();
+    } catch (error) {
+      console.log(error)
+      res.status(400).json(server_response(400))
+    }
+  } else {
+    next();
+  }
 }
 
 module.exports = {
   contro: contro,
   login,
   register,
-  checkUser
+  checkUser,
+  updateToken
 }

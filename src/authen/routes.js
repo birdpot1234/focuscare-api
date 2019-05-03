@@ -19,6 +19,7 @@ router.post("/register",
 
 router.post('/login',
     Regist.login(),
+    Regist.updateToken(),
     (req, res) => {
         res.status(200).json({ success: req.success, message: req.message, result: { token: req.token } })
     }
@@ -34,7 +35,7 @@ router.post('/logout',
 router.post('/checkUser',
     Regist.checkUser(),
     (req, res) => {
-        res.status(200).json({ success: req.success, message:req.message})
+        res.status(200).json({ success: req.success, message: req.message })
     }
 )
 // router.post('/hashPassword',

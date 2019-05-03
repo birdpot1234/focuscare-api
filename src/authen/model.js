@@ -46,7 +46,7 @@ class authenModel {
             typeRegis:99
         }
       
-console.log(varluetb)
+console.log('valiable',varluetb)
 
       return knex('tbl_user').insert(varluetb)
    
@@ -54,6 +54,17 @@ console.log(varluetb)
     async getPassword(typeRegis,username){
         return knex('tbl_user').where({ typeRegis, username });
     }
+    async checkUsername(username){
+    
+        return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99).andWhere({username})})
+       // return knex.raw(`select * from tbl_user where (username = '${username}') AND (typeRegis = 99 OR typeRegis = 0 )` )
+    }
+    verify(username){
+        //return knex('active').where('username')
+        return knex.raw(`update tbl_user set active = 1 where username = '${username}'`)
+    }
+    
+
 
 
 

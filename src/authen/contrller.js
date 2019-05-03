@@ -95,9 +95,9 @@ const login = () => async (req, res, next) => {
   let { typeRegis, username, password, macaddress, tokennoti } = req.body;
   let duplicate = await authenModel.checkDuplicateUser({ typeRegis, username });
   let objToken = {};
- 
-  if (+typeRegis === 0) { // focus
-    console.log('typeRegis:',typeRegis)
+
+  if (+typeRegis === 0) { // ######################### FOCUS #########################
+    console.log('typeRegis:', typeRegis)
     try {
       let objPassword = await authenModel.getPassword(typeRegis, username);
       let decyp = await decrypted(password, objPassword[0].password);
@@ -145,7 +145,6 @@ const login = () => async (req, res, next) => {
   if (req.success) {
     req.token = jsonwebtoken.sign(objToken, constant.sign, { expiresIn: '8h' });
     req.session.token = req.token;
-  
   }
   next();
 }

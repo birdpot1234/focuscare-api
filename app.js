@@ -33,13 +33,9 @@ app.use(cookie({
 ////Body parser 
 app.use(morgan('dev'));
 app.use('/upload', express.static('upload'));
-//app.use('/',express.static('regis_1'));
 app.use(bodyParser.urlencoded({ extended: true, limit: 1024 * 1024 * 20, type: 'application/x-www-form-urlencoded' }));
 app.use(bodyParser.json({ limit: 1024 * 1024 * 2000, type: 'application/json' }));
 
-
-
-// app.use("/", Register);
 createApi(app)
 
 app.get('/', (req, res) => {

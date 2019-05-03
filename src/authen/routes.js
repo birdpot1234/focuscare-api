@@ -13,7 +13,7 @@ router.post("/register",
     Regist.register(),
     (req, res) => {
 
-        res.status(200).json({ success: req.success, message: req.message })
+        res.status(200).json({ success: true, message: req.message })
 
     })
 
@@ -31,29 +31,17 @@ router.post('/logout',
         res.status(200).json({ success: true, message: 'ออกจากระบบสำเร็จ' })
     }
 )
-
-router.get('/sendMailRegis',
-    Regist.send(),
-    (req,res)=>{
-        res.status(200).json({ success: req.success, message: req.message })
+router.post('/checkUser',
+    Regist.checkUser(),
+    (req, res) => {
+        res.status(200).json({ success: req.success, message:req.message})
     }
 )
-router.get('/verify',
-    Regist.verify(),
-    (req,res)=>{
-        res.redirect("focuscare://vertify?email="+req.query.email)
-        // res.status(200).json({ success: req.success, message: req.message })
-    }
-)
-router.post('/activeUser',
-    Regist.activeUser(),
-    (req,res)=>{
-        //res.redirect("focuscare://vertify?email="+req.query.email)
-         res.status(200).json({ success: req.success, message: req.message })
-    }
-)
-
-
-
+// router.post('/hashPassword',
+//     Regist.hashPassword(),
+//     (req, res) => {
+//         res.status(200).json({ success: req.success, message:req.message})
+//     }
+// )
 
 module.exports = router

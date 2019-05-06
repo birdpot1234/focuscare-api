@@ -66,7 +66,8 @@ class authenModel {
     }
     async checkUsername(username)
     {
-        return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99).andWhere({username})})
+        // return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99).andWhere({username})})
+        return knex.raw(`select user_id from tbl_user where (typeRegis =0 or typeRegis =99) AND (username='${username}')`)
     }
     async verify(username)
     {

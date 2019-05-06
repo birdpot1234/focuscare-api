@@ -75,19 +75,28 @@ const encrypted = async (password, res) => {
 const register = () => async (req, res, next) => {
 
 try {
-    await encrypted(req.body.password);
-    await authenModel.registerDplus(req.body, pass_encrypted);
-    req.success = true;
-    req.message = "ลงทะเบียนสำเร็จ";
+  
+    
 
   let checkUser = await authenModel.checkUsername(req.body.username)
-  if (checkUser.length != 0) {
-        req.success = false;
-        req.message = "username นี้ถูกใช้ไปแล้ว";
-        next();
-      }
+  console.log(checkUser[0].length)
+  //console.log(checkUser)
+  if (checkUser[0].length != 0) {
+    req.success = false;
+    req.message = "username นี้ถูกใช้ไปแล้ว";
+    next();
+  }
+  else {
+    await encrypted(req.body.password);
+    await authenModel.registerDplus(req.body, pass_encrypted);
+    await send(req.body.username);
+   
+    req.success = true;
+    req.message = "ลงทะเบียนสำเร็จ";
+  }
 } catch (error) {
-  
+    console.log(error)
+    res.status(400).json(server_response(400))
 }
 }
 
@@ -173,21 +182,21 @@ var smtpTransport = nodemailer.createTransport({
   }
 });
 var rand, mailOptions, host, link, sendto
-const send = () => async (req, res, next) => {
+const send2 = () => async (req, res, next) => {
   console.log('send')
   
   rand = Math.floor((Math.random() * 100) + 54);
   host = '192.168.20.58:3499'
-  hostwifi = '192.168.1.119:3499'
+  hostwifi = '192.168.1.103:3499'
   sendto = 'zinachen1@gmail.com';
-  sendto2 = 'peeraponpothai2536@gmail.com';
-  link = "http://" + hostwifi + "/api/authen/verify?email=" + sendto;
+  sendto2 = req.body.username;
+  link = "http://" + hostwifi + "/api/authen/verify?email=" + sendto2;
   sendto2 = 'peeraponpothai2536@gmail.com';
   linkOpen = "focuscare://"
   link2 = "www.google.com"
   
   mailOptions = {
-    to: sendto,
+    to: sendto2,
     subject: "Please confirm your Email account",
     html: "Hello ,<br> Please Click on the link to verify your email..<br><a href=" + link+ ">Click here to verify</a>"
 
@@ -211,10 +220,57 @@ const send = () => async (req, res, next) => {
   })
 
 }
+const send = async (email, res) => {
+  let respon =null
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(respon)
+    }, 500);
+    console.log('send')
+  
+    rand = Math.floor((Math.random() * 100) + 54);
+    host = '192.168.20.58:3499'
+    hostwifi = '192.168.1.103:3499'
+    sendto = 'zinachen1@gmail.com';
+    sendto2 = email;
+    link = "http://" + hostwifi + "/api/authen/verify?email=" + sendto2;
+    sendto2 = 'peeraponpothai2536@gmail.com';
+    linkOpen = "focuscare://"
+    link2 = "www.google.com"
+    
+    mailOptions = {
+      to: sendto2,
+      subject: "Please confirm your Email account",
+      html: "Hello ,<br> Please Click on the link to verify your email..<br><a href=" + link+ ">Click here to verify</a>"
+  
+    }
+  
+    smtpTransport.sendMail(mailOptions, (error, response) => {
+      if (error) {
+        console.log('send',false)
+        respon =false
+       
+  
+      }
+      else {
+        console.log('send',true)
+        respon=true
+    
+  
+      }
+      
+  
+    })
+  })
+}
 const verify = () => async (req, res, next) => {
+next()
+
+}
+const logg = () => async (req, res, next) => {
   // res.redirect('focuscare://')
  
-next()
+console.log('logg')
 
 
 }
@@ -250,6 +306,7 @@ module.exports = {
   updateToken,
   send,
   verify,
-  activeUser
+  activeUser,
+  logg
 
 }

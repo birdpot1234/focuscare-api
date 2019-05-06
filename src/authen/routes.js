@@ -11,6 +11,8 @@ router.get("/test", (req, resp) => {
 
 router.post("/register",
     Regist.register(),
+    // Regist.send(),
+    
     (req, res) => {
 
         res.status(200).json({ success: req.success, message: req.message })

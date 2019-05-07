@@ -4,8 +4,18 @@ const moment = require('moment')
 class authenModel {
 
     async checkDuplicateUser({ typeRegis, username }) {
-        return knex('tbl_user').where({ typeRegis, username });
+         console.log(typeRegis)
+        // return knex('tbl_user').where({ typeRegis, username });
+        
+            return knex('tbl_user').where({ typeRegis, username }); 
+        
     }
+//     async checkUsername({ typeRegis, username }) {
+        
+//            //return knex('tbl_user').where({ username }); 
+//            return knex.raw(`select * from tbl_user where username = '${username}'`)
+       
+//    }
 
     async insertUser(data) {
         delete data.facebook
@@ -67,11 +77,47 @@ class authenModel {
     async checkUsername(username)
     {
         // return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99).andWhere({username})})
-        return knex.raw(`select user_id from tbl_user where (typeRegis =0 or typeRegis =99) AND (username='${username}')`)
+        return knex.raw(`select user_id,typeRegis from tbl_user where (typeRegis =0 or typeRegis =99) AND (username='${username}')`)
     }
     async verify(username)
+    {  let respon = await knex.raw(`select * from tbl_user where username= '${username}' AND typeRegis =0`)
+        if(respon>1)
+        {
+            return knex.raw(`update tbl_user set active =1,typeRegis =0 where username = '${username}'`)
+        }
+        else{
+            return 500
+        }
+       
+    }
+ 
+
+    async tokenVerify(username,tokenVerify)
+    {   
+       
+        let respon = await knex('tb_verify').where({username });
+        
+        if(respon.length==0)
+        {
+            
+            return knex('tb_verify').insert({username,tokenVerify });
+        }
+        else{
+          
+          
+            return knex.raw(`update tb_verify set tokenVerify = '${tokenVerify}' where username = '${username}'`)
+        }
+       
+        
+    }
+    async checkTokenverify(username,tokenVerify)
     {
-        return knex.raw(`update tbl_user set active =1 where username = '${username}'`)
+        return knex('tb_verify').where({ username, tokenVerify });
+        
+    }
+    async setNewpassword(username,password)
+    {
+        return knex.raw(`update tbl_user  set password = '${password}' where username = '${username}' AND typeRegis = 0 `)
     }
 
 

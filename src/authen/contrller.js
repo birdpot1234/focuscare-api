@@ -6,6 +6,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const constant = require('../constant')
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const sendmail = require('../middleware/sendmail')
 
 let pass_encrypted = null;
 
@@ -55,11 +56,13 @@ const encrypted = async (password, res) => {
     }, 500);
     bcrypt.genSalt(10, (err, salt) => {
       if (err) {
-        res.status(400).json(server_response(400))
+       // res.status(400).json(server_response(400))
+       console.log(err)
       } else {
         bcrypt.hash(password, salt, (err, hash) => {
           if (err) {
-            res.status(400).json(server_response(400))
+           // res.status(400).json(server_response(400))
+           console.log(err)
           } else {
             password = hash;
             pass_encrypted = password
@@ -89,43 +92,65 @@ try {
   else {
     await encrypted(req.body.password);
     await authenModel.registerDplus(req.body, pass_encrypted);
-    await send(req.body.username);
-   
+    // send(req.body.username,'',1);
+    sendmail.sendmail(req.body.username,pass_encrypted,1)
     req.success = true;
     req.message = "ลงทะเบียนสำเร็จ";
+    next();
   }
 } catch (error) {
     console.log(error)
     res.status(400).json(server_response(400))
 }
+
 }
 
 const login = () => async (req, res, next) => {
   let { typeRegis, username, password, macaddress, tokennoti } = req.body;
+  
+
   let duplicate = await authenModel.checkDuplicateUser({ typeRegis, username });
+
   let objToken = {};
 
   if (+typeRegis === 0) { // ######################### FOCUS #########################
     console.log('typeRegis:', typeRegis)
-    try {
-      let objPassword = await authenModel.getPassword(typeRegis, username);
-      let decyp = await decrypted(password, objPassword[0].password);
-      console.log(decyp)
-      if (decyp) {
-        req.success = true;
-        req.message = "เข้าสู่ระบบสำเร็จ";
-        objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
-        req.user_id = objPassword[0].user_id;
+    //check user typeRegis 99
+    let responUser = await authenModel.checkUsername(username);
+    let data = responUser[0]
+    if(responUser.length >0){
+      if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
+        try {
+          let objPassword = await authenModel.getPassword(typeRegis, username);
+          let decyp = await decrypted(password, objPassword[0].password);
+          console.log(decyp)
+          if (decyp) {
+            req.success = true;
+            req.message = "เข้าสู่ระบบสำเร็จ";
+            objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
+            req.user_id = objPassword[0].user_id;
+          }
+          else {
+            console.log('password Incorect')
+            req.success = false;
+            req.message = "passwor Incorect";
+          }
+        } catch (error) {
+          console.log(error)
+          res.status(400).json(server_response(400))
+        }
       }
       else {
-        console.log('password Incorect')
         req.success = false;
-        req.message = "passwor Incorect";
+        req.message = "Username ยังไม่ได้ทำการ Activate mail";
       }
-    } catch (error) {
-      console.log(error)
-      res.status(400).json(server_response(400))
+
     }
+    else {
+      req.success = false;
+      req.message = "ไม่พบ user นี้ในระบบ";
+    } 
+
   } else if (+typeRegis === 1) { // ######################### FACEBOOK #########################
     try {
       if (duplicate.length > 0) { // have username
@@ -173,129 +198,88 @@ const updateToken = () => async (req, res, next) => {
     next();
   }
 }
-var smtpTransport = nodemailer.createTransport({
 
-  service: "gmail",
-  auth: {
-    user: "Focus@dplusonline.net",
-    pass: "Focu1234"
-  }
-});
-var rand, mailOptions, host, link, sendto
-const send2 = () => async (req, res, next) => {
-  console.log('send')
-  
-  rand = Math.floor((Math.random() * 100) + 54);
-  host = '192.168.20.58:3499'
-  hostwifi = '192.168.1.103:3499'
-  sendto = 'zinachen1@gmail.com';
-  sendto2 = req.body.username;
-  link = "http://" + hostwifi + "/api/authen/verify?email=" + sendto2;
-  sendto2 = 'peeraponpothai2536@gmail.com';
-  linkOpen = "focuscare://"
-  link2 = "www.google.com"
-  
-  mailOptions = {
-    to: sendto2,
-    subject: "Please confirm your Email account",
-    html: "Hello ,<br> Please Click on the link to verify your email..<br><a href=" + link+ ">Click here to verify</a>"
-
-  }
-
-  smtpTransport.sendMail(mailOptions, (error, response) => {
-    if (error) {
-
-      req.success = false;
-      req.message = error;
-
-    }
-    else {
-
-      req.success = true;
-      req.message = 'ส่ง email  สำเร็จ';
-
-    }
-    next()
-
-  })
-
-}
-const send = async (email, res) => {
-  let respon =null
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(respon)
-    }, 500);
-    console.log('send')
-  
-    rand = Math.floor((Math.random() * 100) + 54);
-    host = '192.168.20.58:3499'
-    hostwifi = '192.168.1.103:3499'
-    sendto = 'zinachen1@gmail.com';
-    sendto2 = email;
-    link = "http://" + hostwifi + "/api/authen/verify?email=" + sendto2;
-    sendto2 = 'peeraponpothai2536@gmail.com';
-    linkOpen = "focuscare://"
-    link2 = "www.google.com"
-    
-    mailOptions = {
-      to: sendto2,
-      subject: "Please confirm your Email account",
-      html: "Hello ,<br> Please Click on the link to verify your email..<br><a href=" + link+ ">Click here to verify</a>"
-  
-    }
-  
-    smtpTransport.sendMail(mailOptions, (error, response) => {
-      if (error) {
-        console.log('send',false)
-        respon =false
-       
-  
-      }
-      else {
-        console.log('send',true)
-        respon=true
-    
-  
-      }
-      
-  
-    })
-  })
-}
 const verify = () => async (req, res, next) => {
-next()
+  next()
 
 }
-const logg = () => async (req, res, next) => {
-  // res.redirect('focuscare://')
+const verifyForgetpass = () => async (req, res, next) => {
  
-console.log('logg')
-
+  next()
 
 }
+const checkTokenverify= () => async (req, res, next) => {
+  let respon=await authenModel.checkTokenverify(req.body.username,req.body.token)
+  console.log(respon.length)
+  if(respon.length==0)
+  {
+    req.success = false;
+    req.message = 'ไม่พบข้อมูล'
+  }
+  else{
+    req.success = true;
+    req.message = 'success forget'
+  }
+  next()
+
+}
+
+
 const activeUser = () =>async(req,res,next) =>{
   try {
-    await authenModel.verify(req.body.username)
+    
+    let respon = await authenModel.verify(req.body.username)
+
     req.success = true;
-    req.message = 'success active';
+    req.message = respon==500?'user นี้ ถูก active ไปแล้ว':'success active';
+    req.active  = respon==500?true:false;
 
   } catch (error) {
     req.success = false;
     req.message = error;
-    console.log(error)
+   
   }
   next()
     
 }
 
+const forGetpassword = () => async(req,res,next)=>{
+  //check user //
+   let respon = await authenModel.checkUsername(req.body.username)
+   if(respon[0].length>0)
+   {
+      await encrypted('pass_encrypted');
+      console.log(pass_encrypted);
+      await authenModel.tokenVerify(req.body.username,pass_encrypted);
+      sendmail.sendmail(req.body.username,pass_encrypted,0)
+     // send(req.body.username,pass_encrypted,0);
+
+      req.success = true;
+      req.message = 'Success forGetpass';
+   }
+   else
+   {
+    req.success = false;
+    req.message = 'ไม่พบ email ในระบบ';
+   }
+   next()
 
 
-
-
-
-
-
+}
+const setNewpassword = () => async(req,res,next)=> {
+  console.log('setpass')
+      await encrypted(req.body.password);
+      try {
+        await authenModel.setNewpassword(req.body.username,pass_encrypted)
+        req.success = true
+        req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
+      } catch (error) {
+        req.success = false
+        req.message = 'ทำรายการไม่สำเร็จ'
+      }
+      next();
+      
+}
 
 
 
@@ -304,9 +288,11 @@ module.exports = {
   login,
   register,
   updateToken,
-  send,
   verify,
   activeUser,
-  logg
+  forGetpassword,
+  verifyForgetpass,
+  checkTokenverify,
+  setNewpassword
 
 }

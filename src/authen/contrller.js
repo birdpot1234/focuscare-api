@@ -200,6 +200,7 @@ const login = () => async (req, res, next) => {
         req.user_id = user_id;
         req.message = "เข้าสู่ระบบสำเร็จ";
       } else {
+        delete req.body.macaddress
         let result = await authenModel.insertUser({ ...req.body, tokennoti }) // return facebook id
         objToken = { user_id: result, macaddress } // เอาไว้ Generate Token
         await authenModel.insertFacebook({ ...req.body.facebook, userId: result })

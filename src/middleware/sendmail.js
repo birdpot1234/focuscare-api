@@ -15,7 +15,7 @@ exports.sendmail = (email,token,status) => {
       
          let hostwifi,sendto,link_regis,link_forGetpass,subject_regis,subject_forGetpass,detailHtml_regis,detailHtml_forGetpass,encry
           
-          hostwifi = '192.168.1.119:3499/'
+          hostwifi = '13.229.199.200:3499/'
           
           sendto = email;
 

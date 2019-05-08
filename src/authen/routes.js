@@ -12,7 +12,7 @@ router.get("/test", (req, resp) => {
 router.post("/register",
     Regist.register(),
     // Regist.send(),
-    
+
     (req, res) => {
 
         res.status(200).json({ success: req.success, message: req.message })
@@ -37,7 +37,7 @@ router.post('/logout',
 router.get('/verify',
     Regist.verify(),
     (req, res) => {
-        res.redirect("focuscare://vertify?email="+req.query.email)
+        res.redirect("focuscare://vertify?email=" + req.query.email)
         //res.status(200).json({ success: req.success, message:req.message})
     }
 )
@@ -47,7 +47,7 @@ router.post('/activeUser',
     (req, res) => {
         //res.redirect("focuscare://vertify?email="+req.query.email)
 
-        res.status(200).json({ success: req.success, message:req.message,active:req.active})
+        res.status(200).json({ success: req.success, message: req.message, active: req.active })
     }
 )
 router.post('/forGetpassword',
@@ -55,28 +55,27 @@ router.post('/forGetpassword',
     (req, res) => {
         //res.redirect("focuscare://vertify?email="+req.query.email)
 
-        res.status(200).json({ success: req.success, message:req.message})
+        res.status(200).json({ success: req.success, message: req.message })
     }
 )
 router.get('/verifyForgetpass',
     Regist.verifyForgetpass(),
     (req, res) => {
-        res.redirect("focuscare://verifyForgetpass?email="+req.query.email+"&token="+req.query.token)
+        res.redirect("focuscare://verifyForgetpass?email=" + req.query.email + "&token=" + req.query.token)
         //res.status(200).json({ success: req.success, message:req.message})
     }
 )
 router.post('/checkTokenverify',
     Regist.checkTokenverify(),
     (req, res) => {
-      
-        res.status(200).json({ success: req.success, message:req.message})
+
+        res.status(200).json({ success: req.success, message: req.message })
     }
 )
 router.post('/setNewpassword',
     Regist.setNewpassword(),
     (req, res) => {
-        //res.redirect("focuscare://verifyForgetpass?email="+req.query.email+"token="+req.query.token)
-        res.status(200).json({ success: req.success, message:req.message})
+        res.status(200).json({ success: req.success, message: req.message })
     }
 )
 

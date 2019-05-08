@@ -56,13 +56,13 @@ const encrypted = async (password, res) => {
     }, 500);
     bcrypt.genSalt(10, (err, salt) => {
       if (err) {
-       // res.status(400).json(server_response(400))
-       console.log(err)
+        // res.status(400).json(server_response(400))
+        console.log(err)
       } else {
         bcrypt.hash(password, salt, (err, hash) => {
           if (err) {
-           // res.status(400).json(server_response(400))
-           console.log(err)
+            // res.status(400).json(server_response(400))
+            console.log(err)
           } else {
             password = hash;
             pass_encrypted = password
@@ -76,38 +76,34 @@ const encrypted = async (password, res) => {
 
 /*####################### CONTROLLER #######################*/
 const register = () => async (req, res, next) => {
-
-try {
-  
-    
-
-  let checkUser = await authenModel.checkUsername(req.body.username)
-  console.log(checkUser[0].length)
-  //console.log(checkUser)
-  if (checkUser[0].length != 0) {
-    req.success = false;
-    req.message = "username นี้ถูกใช้ไปแล้ว";
-    next();
-  }
-  else {
-    await encrypted(req.body.password);
-    await authenModel.registerDplus(req.body, pass_encrypted);
-    // send(req.body.username,'',1);
-    sendmail.sendmail(req.body.username,pass_encrypted,1)
-    req.success = true;
-    req.message = "ลงทะเบียนสำเร็จ";
-    next();
-  }
-} catch (error) {
+  try {
+    let checkUser = await authenModel.checkUsername(req.body.username)
+    console.log(checkUser[0].length)
+    //console.log(checkUser)
+    if (checkUser[0].length != 0) {
+      req.success = false;
+      req.message = "username นี้ถูกใช้ไปแล้ว";
+      next();
+    }
+    else {
+      await encrypted(req.body.password);
+      await authenModel.registerDplus(req.body, pass_encrypted);
+      // send(req.body.username,'',1);
+      sendmail.sendmail(req.body.username, pass_encrypted, 1)
+      req.success = true;
+      req.message = "ลงทะเบียนสำเร็จ";
+      next();
+    }
+  } catch (error) {
     console.log(error)
     res.status(400).json(server_response(400))
-}
+  }
 
 }
 
 const login = () => async (req, res, next) => {
   let { typeRegis, username, password, macaddress, tokennoti } = req.body;
-  
+
 
   let duplicate = await authenModel.checkDuplicateUser({ typeRegis, username });
 
@@ -118,7 +114,7 @@ const login = () => async (req, res, next) => {
     //check user typeRegis 99
     let responUser = await authenModel.checkUsername(username);
     let data = responUser[0]
-    if(responUser.length >0){
+    if (responUser.length > 0) {
       if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
         try {
           let objPassword = await authenModel.getPassword(typeRegis, username);
@@ -149,7 +145,7 @@ const login = () => async (req, res, next) => {
     else {
       req.success = false;
       req.message = "ไม่พบ user นี้ในระบบ";
-    } 
+    }
 
   } else if (+typeRegis === 1) { // ######################### FACEBOOK #########################
     try {
@@ -201,22 +197,20 @@ const updateToken = () => async (req, res, next) => {
 
 const verify = () => async (req, res, next) => {
   next()
-
 }
+
 const verifyForgetpass = () => async (req, res, next) => {
- 
   next()
-
 }
-const checkTokenverify= () => async (req, res, next) => {
-  let respon=await authenModel.checkTokenverify(req.body.username,req.body.token)
+
+const checkTokenverify = () => async (req, res, next) => {
+  let respon = await authenModel.checkTokenverify(req.body.username, req.body.token)
   console.log(respon.length)
-  if(respon.length==0)
-  {
+  if (respon.length == 0) {
     req.success = false;
     req.message = 'ไม่พบข้อมูล'
   }
-  else{
+  else {
     req.success = true;
     req.message = 'success forget'
   }
@@ -225,63 +219,56 @@ const checkTokenverify= () => async (req, res, next) => {
 }
 
 
-const activeUser = () =>async(req,res,next) =>{
+const activeUser = () => async (req, res, next) => {
   try {
-    
     let respon = await authenModel.verify(req.body.username)
-
     req.success = true;
-    req.message = respon==500?'user นี้ ถูก active ไปแล้ว':'success active';
-    req.active  = respon==500?true:false;
-
+    req.message = respon == 500 ? 'user นี้ ถูก active ไปแล้ว' : 'success active';
+    req.active = respon == 500 ? true : false;
   } catch (error) {
     req.success = false;
     req.message = error;
-   
   }
-  next()
-    
+  next();
 }
 
-const forGetpassword = () => async(req,res,next)=>{
+const forGetpassword = () => async (req, res, next) => {
   //check user //
-   let respon = await authenModel.checkUsername(req.body.username)
-   if(respon[0].length>0)
-   {
-      await encrypted('pass_encrypted');
-      console.log(pass_encrypted);
-      await authenModel.tokenVerify(req.body.username,pass_encrypted);
-      sendmail.sendmail(req.body.username,pass_encrypted,0)
-     // send(req.body.username,pass_encrypted,0);
-
-      req.success = true;
-      req.message = 'Success forGetpass';
-   }
-   else
-   {
+  let respon = await authenModel.checkUsername(req.body.username)
+  if (respon[0].length > 0) {
+    await encrypted('pass_encrypted');
+    console.log(pass_encrypted);
+    await authenModel.tokenVerify(req.body.username, pass_encrypted);
+    sendmail.sendmail(req.body.username, pass_encrypted, 0)
+    // send(req.body.username,pass_encrypted,0);
+    req.success = true;
+    req.message = 'Success forGetpass';
+  }
+  else {
     req.success = false;
     req.message = 'ไม่พบ email ในระบบ';
-   }
-   next()
+  }
+  next()
 
 
 }
-const setNewpassword = () => async(req,res,next)=> {
+const setNewpassword = () => async (req, res, next) => {
   console.log('setpass')
-      await encrypted(req.body.password);
-      try {
-        await authenModel.setNewpassword(req.body.username,pass_encrypted)
-        req.success = true
-        req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
-      } catch (error) {
-        req.success = false
-        req.message = 'ทำรายการไม่สำเร็จ'
-      }
-      next();
-      
+  await encrypted(req.body.password);
+  try {
+    await authenModel.setNewpassword(req.body.username, pass_encrypted)
+    req.success = true
+    req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
+  } catch (error) {
+    req.success = false
+    req.message = 'ทำรายการไม่สำเร็จ'
+  }
+  next();
 }
 
+const removeVertify = () => async (req, res, next) => {
 
+}
 
 module.exports = {
   contro: contro,

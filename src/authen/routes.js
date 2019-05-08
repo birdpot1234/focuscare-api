@@ -37,7 +37,7 @@ router.post('/logout',
 router.get('/verify',
     Regist.verify(),
     (req, res) => {
-        res.redirect("focuscare://vertify?email="+req.query.email)
+        res.redirect("focuscare://vertify?"+req.decry)
         //res.status(200).json({ success: req.success, message:req.message})
     }
 )
@@ -61,7 +61,7 @@ router.post('/forGetpassword',
 router.get('/verifyForgetpass',
     Regist.verifyForgetpass(),
     (req, res) => {
-        res.redirect("focuscare://verifyForgetpass?email="+req.query.email+"&token="+req.query.token)
+        res.redirect("focuscare://verifyForgetpass?"+req.decry)
         //res.status(200).json({ success: req.success, message:req.message})
     }
 )
@@ -79,6 +79,9 @@ router.post('/setNewpassword',
         res.status(200).json({ success: req.success, message:req.message})
     }
 )
+
+
+
 
 
 

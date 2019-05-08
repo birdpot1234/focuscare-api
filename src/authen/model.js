@@ -62,7 +62,9 @@ class authenModel {
 
     }
     async getPassword(typeRegis, username) {
-        return knex('tbl_user').where({ typeRegis, username });
+       // return knex('tbl_user').where({ typeRegis, username });
+          return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99).andWhere({username})})
+        //return knex.raw(`select * from tbl_user where (typeRegis =0 OR typeRegis =99) AND (username = '${username}')`)
     }
 
     async updateToken({ token, tokennoti, user_id }) {
@@ -80,10 +82,13 @@ class authenModel {
         return knex.raw(`select user_id,typeRegis from tbl_user where (typeRegis =0 or typeRegis =99) AND (username='${username}')`)
     }
     async verify(username)
-    {  let respon = await knex.raw(`select * from tbl_user where username= '${username}' AND typeRegis =0`)
-        if(respon>1)
+    {   console.log(username)
+         let respon = await knex.raw(`select * from tbl_user where username= '${username}' AND typeRegis =0`)
+        if(respon)
         {
+            console.log(respon)
             return knex.raw(`update tbl_user set active =1,typeRegis =0 where username = '${username}'`)
+            
         }
         else{
             return 500
@@ -118,6 +123,11 @@ class authenModel {
     async setNewpassword(username,password)
     {
         return knex.raw(`update tbl_user  set password = '${password}' where username = '${username}' AND typeRegis = 0 `)
+    }
+    async delToken(username)
+    {
+        console.log(username);
+        return knex.raw(`DELETE FROM tb_verify WHERE username = '${username}' `)
     }
 
 

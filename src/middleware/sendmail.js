@@ -1,6 +1,7 @@
 
 const nodemailer = require('nodemailer');
 const constant = require('../constant')
+const crypto = require('../middleware/cryto')
 exports.sendmail = (email,token,status) => {
     var smtpTransport = nodemailer.createTransport({
 
@@ -12,13 +13,18 @@ exports.sendmail = (email,token,status) => {
       });
    
       
-         let hostwifi,sendto,link_regis,link_forGetpass,subject_regis,subject_forGetpass,detailHtml_regis,detailHtml_forGetpass
+         let hostwifi,sendto,link_regis,link_forGetpass,subject_regis,subject_forGetpass,detailHtml_regis,detailHtml_forGetpass,encry
           
-          hostwifi = '192.168.1.119:3499'
+          hostwifi = '192.168.1.119:3499/'
           
           sendto = email;
-          link_regis = "http://" + hostwifi + "/api/authen/verify?email=" + sendto;
-          link_forGetpass = "http://" + hostwifi + "/api/authen/verifyForgetpass?email=" + sendto+"&token="+token;
+
+          encry =  crypto.encryto("email=" + sendto)
+          encry_forGetpass = crypto.encryto("email=" + sendto+"&token="+token)
+          link_regis = "http://" + hostwifi +"api/authen/verify?"+ encry;
+         
+          //link_forGetpass = "http://" + hostwifi + "/api/authen/verifyForgetpass?email=" + sendto+"&token="+token;
+          link_forGetpass = "http://" + hostwifi+"api/authen/verifyForgetpass?"+encry_forGetpass
           subject_regis = 'Please confirm your Email account'
           subject_forGetpass  = 'Please confirm your Email  for Reset password';
           detailHtml_regis =  "Hello ,<br> Please Click on the link to verify your email..<br><a href=" + link_regis+ ">Click here to verify</a>"
@@ -28,7 +34,7 @@ exports.sendmail = (email,token,status) => {
           subject = (status==1?subject_regis:subject_forGetpass)
           detailHtml = (status==1?detailHtml_regis:detailHtml_forGetpass)
         
-          
+          console.log(link)
           mailOptions = {
             to: sendto,
             subject: subject,//"Please confirm your Email account",

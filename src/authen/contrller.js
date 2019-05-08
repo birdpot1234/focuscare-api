@@ -5,10 +5,12 @@ const authenModel = require('./model')
 const jsonwebtoken = require('jsonwebtoken');
 const constant = require('../constant')
 const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 const sendmail = require('../middleware/sendmail')
-
+//const crypto = require("crypto-js");
+const crypto = require('../middleware/cryto')
 let pass_encrypted = null;
+
 
 const contro = {
   regis_show(callback) {
@@ -73,6 +75,19 @@ const encrypted = async (password, res) => {
     })
   })
 }
+// const decry_mail = () => async (req, res, next) => {
+  
+//   //var cipher = ''crypto.AES.encrypt('U2FsdGVkX18uueS7XkZgeOdaTRsgPW87RvUHraO7EnJbdK8K15K2bLLMyEnRw7ewtK9UfRoQBc1ZitPvsgvIaw==','1234')
+//   var cipher = 'U2FsdGVkX18uueS7XkZgeOdaTRsgPW87RvUHraO7EnJbdK8K15K2bLLMyEnRw7ewtK9UfRoQBc1ZitPvsgvIaw=='
+//   var decry = crypto.AES.decrypt(cipher.toString(),'1234')
+//   var plaintext = decry.toString(crypto.enc.Utf8);
+//   console.log('cipher',cipher.toString())
+//   console.log('decry',plaintext)
+//   req.message = 'eee'
+//   req.success = true
+//   next()
+// }
+
 
 /*####################### CONTROLLER #######################*/
 const register = () => async (req, res, next) => {
@@ -117,36 +132,59 @@ const login = () => async (req, res, next) => {
     console.log('typeRegis:', typeRegis)
     //check user typeRegis 99
     let responUser = await authenModel.checkUsername(username);
-    let data = responUser[0]
-    if(responUser.length >0){
-      if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
-        try {
-          let objPassword = await authenModel.getPassword(typeRegis, username);
-          let decyp = await decrypted(password, objPassword[0].password);
-          console.log(decyp)
-          if (decyp) {
-            req.success = true;
-            req.message = "เข้าสู่ระบบสำเร็จ";
-            objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
-            req.user_id = objPassword[0].user_id;
+    let data = responUser[0]//เช็ค  user ว่ามีในระบบหรือไม่
+    console.log(data.length)
+    if(data.length >0){
+    
+     try {
+     
+        let objPassword = await authenModel.getPassword(typeRegis, username);//get password โดย where username
+        console.log(objPassword[0])
+        let decyp = await decrypted(password, objPassword[0].password);//เทียบ  pass ที่กรอก กับ 
+      
+        if (decyp) {
+           if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
+            try {
+              // let objPassword = await authenModel.getPassword(typeRegis, username);
+              // let decyp = await decrypted(password, objPassword[0].password);
+              // console.log(decyp)
+              // if (decyp) {
+                req.success = true;
+                req.message = "เข้าสู่ระบบสำเร็จ";
+                objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
+                req.user_id = objPassword[0].user_id;
+                console.log('login success')
+              // }
+              // else {
+              //   console.log('password Incorect')
+              //   req.success = false;
+              //   req.message = "passwor Incorect";
+              // }
+            } catch (error) {
+              console.log(error)
+              res.status(400).json(server_response(400))
+            }
           }
           else {
-            console.log('password Incorect')
             req.success = false;
-            req.message = "passwor Incorect";
+            req.message = {activate:true,message:"Username ยังไม่ได้ทำการ Activate mail"}
+           
           }
-        } catch (error) {
-          console.log(error)
-          res.status(400).json(server_response(400))
         }
+        else {
+          console.log('password Incorect')
+          req.success = false;
+          req.message = "passwor Incorect";
+        }
+      } catch (error) {
+        console.log(error)
+        res.status(400).json(server_response(400))
       }
-      else {
-        req.success = false;
-        req.message = "Username ยังไม่ได้ทำการ Activate mail";
-      }
+
 
     }
     else {
+      console.log('false ไม่พบ user')
       req.success = false;
       req.message = "ไม่พบ user นี้ในระบบ";
     } 
@@ -200,10 +238,16 @@ const updateToken = () => async (req, res, next) => {
 }
 
 const verify = () => async (req, res, next) => {
+
+  let decry_email = crypto.decryto(req.originalUrl.slice(req.originalUrl.indexOf("?") + 1))
+  req.decry = decry_email
+
   next()
 
 }
 const verifyForgetpass = () => async (req, res, next) => {
+  let decry_email = crypto.decryto(req.originalUrl.slice(req.originalUrl.indexOf("?")+1))
+  req.decry = decry_email
  
   next()
 
@@ -233,6 +277,7 @@ const activeUser = () =>async(req,res,next) =>{
     req.success = true;
     req.message = respon==500?'user นี้ ถูก active ไปแล้ว':'success active';
     req.active  = respon==500?true:false;
+    console.log(req.success)
 
   } catch (error) {
     req.success = false;
@@ -271,6 +316,7 @@ const setNewpassword = () => async(req,res,next)=> {
       await encrypted(req.body.password);
       try {
         await authenModel.setNewpassword(req.body.username,pass_encrypted)
+        await authenModel.delToken(req.body.username)
         req.success = true
         req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
       } catch (error) {
@@ -294,5 +340,6 @@ module.exports = {
   verifyForgetpass,
   checkTokenverify,
   setNewpassword
+  
 
 }

@@ -313,9 +313,11 @@ const forGetpassword = () => async(req,res,next)=>{
 
 }
 const setNewpassword = () => async(req,res,next)=> {
-  console.log('setpass')
+  console.log('oldpass',req.body.password)
       await encrypted(req.body.password);
+      
       try {
+        console.log('passencry',pass_encrypted)
         await authenModel.setNewpassword(req.body.username,pass_encrypted)
         await authenModel.delToken(req.body.username)
         req.success = true

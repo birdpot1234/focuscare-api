@@ -75,18 +75,6 @@ const encrypted = async (password, res) => {
     })
   })
 }
-// const decry_mail = () => async (req, res, next) => {
-
-//   //var cipher = ''crypto.AES.encrypt('U2FsdGVkX18uueS7XkZgeOdaTRsgPW87RvUHraO7EnJbdK8K15K2bLLMyEnRw7ewtK9UfRoQBc1ZitPvsgvIaw==','1234')
-//   var cipher = 'U2FsdGVkX18uueS7XkZgeOdaTRsgPW87RvUHraO7EnJbdK8K15K2bLLMyEnRw7ewtK9UfRoQBc1ZitPvsgvIaw=='
-//   var decry = crypto.AES.decrypt(cipher.toString(),'1234')
-//   var plaintext = decry.toString(crypto.enc.Utf8);
-//   console.log('cipher',cipher.toString())
-//   console.log('decry',plaintext)
-//   req.message = 'eee'
-//   req.success = true
-//   next()
-// }
 
 
 /*####################### CONTROLLER #######################*/
@@ -129,33 +117,27 @@ const login = () => async (req, res, next) => {
     //check user typeRegis 99
     let responUser = await authenModel.checkUsername(username);
     let data = responUser[0]//เช็ค  user ว่ามีในระบบหรือไม่
+    console.log('data',data)
     console.log(data.length)
     if (data.length > 0) {
 
       try {
 
         let objPassword = await authenModel.getPassword(typeRegis, username);//get password โดย where username
-        console.log(objPassword[0])
+         console.log('passwordInput',password)
+         console.log('passwordDB:',objPassword[0].password)
         let decyp = await decrypted(password, objPassword[0].password);//เทียบ  pass ที่กรอก กับ 
 
         if (decyp) {
           if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
             try {
-              // let objPassword = await authenModel.getPassword(typeRegis, username);
-              // let decyp = await decrypted(password, objPassword[0].password);
-              // console.log(decyp)
-              // if (decyp) {
-              req.success = true;
-              req.message = "เข้าสู่ระบบสำเร็จ";
-              objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
-              req.user_id = objPassword[0].user_id;
-              console.log('login success')
-              // }
-              // else {
-              //   console.log('password Incorect')
-              //   req.success = false;
-              //   req.message = "passwor Incorect";
-              // }
+             
+                req.success = true;
+                req.message = "เข้าสู่ระบบสำเร็จ";
+                objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
+                req.user_id = objPassword[0].user_id;
+                console.log('login success')
+           
             } catch (error) {
               console.log(error)
               res.status(400).json(server_response(400))
@@ -301,20 +283,22 @@ const forGetpassword = () => async (req, res, next) => {
 
 
 }
-const setNewpassword = () => async (req, res, next) => {
-  console.log('setpass')
-  await encrypted(req.body.password);
-  try {
-    await authenModel.setNewpassword(req.body.username, pass_encrypted)
-    await authenModel.delToken(req.body.username)
-    req.success = true
-    req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
-  } catch (error) {
-    req.success = false
-    req.message = 'ทำรายการไม่สำเร็จ'
-  }
-  next();
-
+const setNewpassword = () => async(req,res,next)=> {
+  console.log('oldpass',req.body.password)
+      await encrypted(req.body.password);
+      
+      try {
+        console.log('passencry',pass_encrypted)
+        await authenModel.setNewpassword(req.body.username,pass_encrypted)
+        await authenModel.delToken(req.body.username)
+        req.success = true
+        req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
+      } catch (error) {
+        req.success = false
+        req.message = 'ทำรายการไม่สำเร็จ'
+      }
+      next();
+      
 }
 
 const removeVertify = () => async (req, res, next) => {

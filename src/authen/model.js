@@ -53,8 +53,8 @@ class authenModel {
 
     }
     async getPassword(typeRegis, username) {
-        // return knex('tbl_user').where({ typeRegis, username });
-        return knex('tbl_user').where(function () { this.where('typeRegis', 0).orWhere('typeRegis', 99).andWhere({ username }) })
+       // return knex('tbl_user').where({ typeRegis, username });
+          return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99)}).andWhere({username})
         //return knex.raw(`select * from tbl_user where (typeRegis =0 OR typeRegis =99) AND (username = '${username}')`)
     }
 

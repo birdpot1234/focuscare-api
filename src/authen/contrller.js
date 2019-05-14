@@ -76,7 +76,7 @@ const encrypted = async (password, res) => {
   })
 }
 // const decry_mail = () => async (req, res, next) => {
-  
+
 //   //var cipher = ''crypto.AES.encrypt('U2FsdGVkX18uueS7XkZgeOdaTRsgPW87RvUHraO7EnJbdK8K15K2bLLMyEnRw7ewtK9UfRoQBc1ZitPvsgvIaw==','1234')
 //   var cipher = 'U2FsdGVkX18uueS7XkZgeOdaTRsgPW87RvUHraO7EnJbdK8K15K2bLLMyEnRw7ewtK9UfRoQBc1ZitPvsgvIaw=='
 //   var decry = crypto.AES.decrypt(cipher.toString(),'1234')
@@ -130,26 +130,26 @@ const login = () => async (req, res, next) => {
     let responUser = await authenModel.checkUsername(username);
     let data = responUser[0]//เช็ค  user ว่ามีในระบบหรือไม่
     console.log(data.length)
-    if(data.length >0){
-    
-     try {
-     
+    if (data.length > 0) {
+
+      try {
+
         let objPassword = await authenModel.getPassword(typeRegis, username);//get password โดย where username
         console.log(objPassword[0])
         let decyp = await decrypted(password, objPassword[0].password);//เทียบ  pass ที่กรอก กับ 
-      
+
         if (decyp) {
-           if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
+          if (data[0].typeRegis == 0) {//#######typeRegis = 0 User is active true##########
             try {
               // let objPassword = await authenModel.getPassword(typeRegis, username);
               // let decyp = await decrypted(password, objPassword[0].password);
               // console.log(decyp)
               // if (decyp) {
-                req.success = true;
-                req.message = "เข้าสู่ระบบสำเร็จ";
-                objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
-                req.user_id = objPassword[0].user_id;
-                console.log('login success')
+              req.success = true;
+              req.message = "เข้าสู่ระบบสำเร็จ";
+              objToken = { user_id: objPassword[0].user_id, macaddress } // เอาไว้ Generate Token
+              req.user_id = objPassword[0].user_id;
+              console.log('login success')
               // }
               // else {
               //   console.log('password Incorect')
@@ -163,8 +163,8 @@ const login = () => async (req, res, next) => {
           }
           else {
             req.success = false;
-            req.message = {activate:true,message:"Username ยังไม่ได้ทำการ Activate mail"}
-           
+            req.message = { activate: true, message: "Username ยังไม่ได้ทำการ Activate mail" }
+
           }
         }
         else {
@@ -196,7 +196,9 @@ const login = () => async (req, res, next) => {
         req.user_id = user_id;
         req.message = "เข้าสู่ระบบสำเร็จ";
       } else {
+        delete req.body.macaddress
         let result = await authenModel.insertUser({ ...req.body, tokennoti }) // return facebook id
+        console.log(result)
         objToken = { user_id: result, macaddress } // เอาไว้ Generate Token
         await authenModel.insertFacebook({ ...req.body.facebook, userId: result })
         req.success = true;
@@ -242,9 +244,9 @@ const verify = () => async (req, res, next) => {
 }
 
 const verifyForgetpass = () => async (req, res, next) => {
-  let decry_email = crypto.decryto(req.originalUrl.slice(req.originalUrl.indexOf("?")+1))
+  let decry_email = crypto.decryto(req.originalUrl.slice(req.originalUrl.indexOf("?") + 1))
   req.decry = decry_email
- 
+
   next()
 }
 
@@ -268,8 +270,8 @@ const activeUser = () => async (req, res, next) => {
   try {
     let respon = await authenModel.verify(req.body.username)
     req.success = true;
-    req.message = respon==500?'user นี้ ถูก active ไปแล้ว':'success active';
-    req.active  = respon==500?true:false;
+    req.message = respon == 500 ? 'user นี้ ถูก active ไปแล้ว' : 'success active';
+    req.active = respon == 500 ? true : false;
     console.log(req.success)
 
   } catch (error) {
@@ -301,18 +303,18 @@ const forGetpassword = () => async (req, res, next) => {
 }
 const setNewpassword = () => async (req, res, next) => {
   console.log('setpass')
-      await encrypted(req.body.password);
-      try {
-        await authenModel.setNewpassword(req.body.username,pass_encrypted)
-        await authenModel.delToken(req.body.username)
-        req.success = true
-        req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
-      } catch (error) {
-        req.success = false
-        req.message = 'ทำรายการไม่สำเร็จ'
-      }
-      next();
-      
+  await encrypted(req.body.password);
+  try {
+    await authenModel.setNewpassword(req.body.username, pass_encrypted)
+    await authenModel.delToken(req.body.username)
+    req.success = true
+    req.message = 'รีเซ็ตรหัสผ่านสำเร็จ'
+  } catch (error) {
+    req.success = false
+    req.message = 'ทำรายการไม่สำเร็จ'
+  }
+  next();
+
 }
 
 const removeVertify = () => async (req, res, next) => {
@@ -330,6 +332,6 @@ module.exports = {
   verifyForgetpass,
   checkTokenverify,
   setNewpassword
-  
+
 
 }

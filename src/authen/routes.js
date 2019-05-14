@@ -11,8 +11,6 @@ router.get("/test", (req, resp) => {
 
 router.post("/register",
     Regist.register(),
-    // Regist.send(),
-
     (req, res) => {
 
         res.status(200).json({ success: req.success, message: req.message })
@@ -37,7 +35,7 @@ router.post('/logout',
 router.get('/verify',
     Regist.verify(),
     (req, res) => {
-        res.redirect("focuscare://vertify?"+req.decry)
+        res.redirect("focuscare://vertify?" + req.decry)
         //res.status(200).json({ success: req.success, message:req.message})
     }
 )
@@ -46,7 +44,6 @@ router.post('/activeUser',
     Regist.activeUser(),
     (req, res) => {
         //res.redirect("focuscare://vertify?email="+req.query.email)
-
         res.status(200).json({ success: req.success, message: req.message, active: req.active })
     }
 )
@@ -61,7 +58,7 @@ router.post('/forGetpassword',
 router.get('/verifyForgetpass',
     Regist.verifyForgetpass(),
     (req, res) => {
-        res.redirect("focuscare://verifyForgetpass?"+req.decry)
+        res.redirect("focuscare://verifyForgetpass?" + req.decry)
         //res.status(200).json({ success: req.success, message:req.message})
     }
 )

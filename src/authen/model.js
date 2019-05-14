@@ -2,7 +2,6 @@ const knex = require('../../connect')
 const moment = require('moment')
 
 class authenModel {
-
     async checkDuplicateUser({ typeRegis, username }) {
         return knex('tbl_user').where({ typeRegis, username });
     }
@@ -15,14 +14,13 @@ class authenModel {
             ...data,
             birthDay: moment.utc(new Date(birthDay)).add(7, 'h').format('YYYY-MM-DD'),
             createRegisdate: moment().format('YYYY-MM-DD HH:mm:ss'),
+            active: 1
         }
-        console.log(data)
         await knex('tbl_user').insert({ ...data });
         return data.user_id
     }
 
     async insertFacebook(data) {
-        console.log(data)
         return knex('tbl_facebook').insert({ ...data, expDate: moment(data.expDate).format('YYYY-MM-DD HH:mm:ss') })
     }
 
@@ -32,8 +30,8 @@ class authenModel {
             expDate: moment(data.expDate).format('YYYY-MM-DD HH:mm:ss')
         }).where({ userId: data.userId })
     }
-    async registerDplus(data, password) {
 
+    async registerDplus(data, password) {
         let date = moment().format("YYYY-MM-DD");
         let datetime = moment().local('th').format("YYYY-MM-DD HH:mm:ss");
         let user_id = moment().unix();
@@ -53,8 +51,8 @@ class authenModel {
 
     }
     async getPassword(typeRegis, username) {
-       // return knex('tbl_user').where({ typeRegis, username });
-          return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99)}).andWhere({username})
+        // return knex('tbl_user').where({ typeRegis, username });
+        return knex('tbl_user').where(function () { this.where('typeRegis', 0).orWhere('typeRegis', 99) }).andWhere({ username })
         //return knex.raw(`select * from tbl_user where (typeRegis =0 OR typeRegis =99) AND (username = '${username}')`)
     }
 
@@ -67,10 +65,12 @@ class authenModel {
         }
         return knex('tbl_user').update(obj).where({ user_id });
     }
+
     async checkUsername(username) {
         // return knex('tbl_user').where(function(){this.where('typeRegis',0).orWhere('typeRegis',99).andWhere({username})})
         return knex.raw(`select user_id,typeRegis from tbl_user where (typeRegis =0 or typeRegis =99) AND (username='${username}')`)
     }
+
     async verify(username) {
         console.log(username)
         let respon = await knex.raw(`select * from tbl_user where username= '${username}' AND typeRegis =0`)
@@ -84,7 +84,6 @@ class authenModel {
         }
 
     }
-
 
     async tokenVerify(username, tokenVerify) {
         let respon = await knex('tb_verify').where({ username });
@@ -107,8 +106,6 @@ class authenModel {
         console.log(username);
         return knex.raw(`DELETE FROM tb_verify WHERE username = '${username}' `)
     }
-
-
 }
 
 module.exports = new authenModel();

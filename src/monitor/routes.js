@@ -2,6 +2,8 @@ const express = require('express');
 const { validate_token } = require('../middleware/token');
 const moment = require('moment')
 const router = express.Router();
+const monitor = require('./controller')
+
 
 router.post("/save_screen",
     validate_token(),
@@ -14,5 +16,13 @@ router.post("/save_screen",
         console.log('mac_address', req.macaddress);
         res.status(200).json({ success: true })
     })
+
+router.post('/screentime', 
+    monitor.screentime(),
+(req,res) => {
+    res.status(200).json({ success: req.success, message: req.message })
+})
+
+
 
 module.exports = router;

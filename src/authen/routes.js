@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const Regist = require('./contrller');
+const Regist = require('./controller');
 
 const { validate_token } = require('../middleware/token');
 
-router.get("/test", (req, resp) => {
-    Regist.contro.regis_show((res_data) => resp.json(res_data))
-})
+// router.get("/test", (req, resp) => {
+//     Regist.contro.regis_show((res_data) => resp.json(res_data))
+// })
 
 router.post("/register",
     Regist.register(),
@@ -71,6 +71,13 @@ router.post('/checkTokenverify',
 )
 router.post('/setNewpassword',
     Regist.setNewpassword(),
+    (req, res) => {
+        res.status(200).json({ success: req.success, message: req.message })
+    }
+)
+
+router.post('/lineNoti',
+    Regist.lineNoti(),
     (req, res) => {
         res.status(200).json({ success: req.success, message: req.message })
     }

@@ -1,8 +1,3 @@
-
-
-
-
-
 const response = (status, dev_msg, data) => {
     switch (status) {
         case 200: return { status: 200, message: "OK", dev_msg: dev_msg, result: data }
@@ -38,7 +33,7 @@ const response = (status, dev_msg, data) => {
     }
 }
 module.exports = {
-    
+
     server_response: response
-  
+
 }

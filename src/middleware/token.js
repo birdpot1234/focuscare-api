@@ -1,5 +1,5 @@
 const jsonwebtoken = require('jsonwebtoken');
-const response = require('../../server');
+const { server_response } = require('../../service');
 const constant = require('../constant')
 
 exports.validate_token = () => {
@@ -8,7 +8,7 @@ exports.validate_token = () => {
             console.log(req.headers.authorization)
             jsonwebtoken.verify(req.headers.authorization, constant.sign, (error, decode) => {
                 if (error) {
-                    res.status(401).json(response(401));
+                    res.status(401).json(server_response(401));
                 } else {
                     req.user_id = decode.user_id;
                     req.macaddress = decode.macaddress;
@@ -18,7 +18,7 @@ exports.validate_token = () => {
         } else if (req.session.token) {
             jsonwebtoken.verify(req.session.token, constant.sign, (err, decode) => {
                 if (err) {
-                    res.status(401).json(response(401));
+                    res.status(401).json(server_response(401));
                 } else {
                     req.user_id = decode.user_id;
                     req.macaddress = decode.macaddress;
@@ -27,7 +27,7 @@ exports.validate_token = () => {
             })
         } else {
             req.session.token = null;
-            res.status(401).json(response(401));
+            res.status(401).json(server_response(401));
         }
     }
 }

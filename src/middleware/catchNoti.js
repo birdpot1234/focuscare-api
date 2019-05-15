@@ -1,7 +1,7 @@
 const request = require('request')
 
 exports.Noti = (message) => {
-    var token = 'aPfiMEEVD9VXgiucibaabJnEKx5DFoY98ZWQuuaVbEy';
+    var token = 'ICEoieeuGXBgOTslGSvRIxCu8bCKAJSrVfHR2f6dzMV';
     var message = message;
     new Promise((resolve, reject) => {
         setTimeout(() => {

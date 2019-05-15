@@ -321,9 +321,6 @@ const lineNoti = () => async(req,res,next)=> {
 
 }
 
-const print =  async() => {
-  console.log('print 2')
-}
 
 
 

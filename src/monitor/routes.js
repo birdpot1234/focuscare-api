@@ -26,7 +26,8 @@ router.post('/screentime',
 
 
 router.post('/battery',
-    validate_token(),
+   // validate_token(),
+    monitor.bettery(),
     (req, res) => {
         console.log(req.body)
         res.status(200).json({ success: true });

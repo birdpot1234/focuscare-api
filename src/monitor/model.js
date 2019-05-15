@@ -10,6 +10,11 @@ class monitorModel {
         return knex(`tbl_screentime`).insert({...data});
 
     }
+    async bettery_Insert(data) {
+        
+        return knex(`tbl_battery`).insert({...data});
+
+    }
 
 }
 

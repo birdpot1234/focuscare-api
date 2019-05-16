@@ -5,13 +5,12 @@ const constant = require('../constant')
 exports.validate_token = () => {
     return (req, res, next) => {
         if (req.headers && req.headers.authorization) {
-            console.log(req.headers.authorization)
             jsonwebtoken.verify(req.headers.authorization, constant.sign, (error, decode) => {
                 if (error) {
                     res.status(401).json(server_response(401));
                 } else {
                     req.user_id = decode.user_id;
-                    req.macaddress = decode.macaddress;
+                    req.uniqueID = decode.uniqueID;
                     next();
                 }
             })
@@ -21,7 +20,7 @@ exports.validate_token = () => {
                     res.status(401).json(server_response(401));
                 } else {
                     req.user_id = decode.user_id;
-                    req.macaddress = decode.macaddress;
+                    req.uniqueID = decode.uniqueID;
                     next();
                 }
             })

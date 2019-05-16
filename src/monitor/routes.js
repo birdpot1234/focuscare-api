@@ -13,24 +13,24 @@ router.post("/save_screen",
         console.log('date_on', moment(new Date(date_on)).format('DD-MM-YYYY HH:mm:ss'))
         console.log('date_off', moment(new Date(date_off)).format('DD-MM-YYYY HH:mm:ss'))
         console.log('user_id', req.user_id);
-        console.log('mac_address', req.macaddress);
+        console.log('mac_address', req.uniqueId);
         res.status(200).json({ success: true })
     })
 
-router.post('/screentime', 
+router.post('/screentime',
+    validate_token(),
     monitor.screentime(),
-(req,res) => {
-    res.status(200).json({ success: req.success, message: req.message })
-})
+    (req, res) => {
+        res.status(200).json({ success: req.success, message: req.message })
+    })
 
 
 
 router.post('/battery',
-   // validate_token(),
+    validate_token(),
     monitor.bettery(),
     (req, res) => {
-        console.log(req.body)
-        res.status(200).json({ success: true });
+        res.status(200).json({ success: true, message: req.message });
     }
 )
 

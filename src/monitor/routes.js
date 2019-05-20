@@ -6,7 +6,7 @@ const monitor = require('./controller')
 
 
 router.post("/save_screen",
-    validate_token(),
+    // validate_token(),
     (req, res) => {
         console.log('call api save screen')
         // let { date_on, date_off, platform } = req.body;

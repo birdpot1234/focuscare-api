@@ -8,12 +8,13 @@ const monitor = require('./controller')
 router.post("/save_screen",
     validate_token(),
     (req, res) => {
-        let { date_on, date_off, platform } = req.body;
-        console.log("PLATFORM ::: ", platform)
-        console.log('date_on', moment(new Date(date_on)).format('DD-MM-YYYY HH:mm:ss'))
-        console.log('date_off', moment(new Date(date_off)).format('DD-MM-YYYY HH:mm:ss'))
-        console.log('user_id', req.user_id);
-        console.log('mac_address', req.uniqueId);
+        console.log('call api save screen')
+        // let { date_on, date_off, platform } = req.body;
+        // console.log("PLATFORM ::: ", platform)
+        // console.log('date_on', moment(new Date(date_on)).format('DD-MM-YYYY HH:mm:ss'))
+        // console.log('date_off', moment(new Date(date_off)).format('DD-MM-YYYY HH:mm:ss'))
+        // console.log('user_id', req.user_id);
+        // console.log('mac_address', req.uniqueId);
         res.status(200).json({ success: true })
     })
 

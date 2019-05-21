@@ -21,7 +21,14 @@ router.post('/login',
     Regist.login(),
     Regist.updateToken(),
     (req, res) => {
-        res.status(200).json({ success: req.success, message: req.message, result: { token: req.token } })
+        res.status(200).json({
+            success: req.success,
+            message: req.message, result: {
+                token: req.token, user_id: req.user_id,
+                fullname: req.fullname
+            },
+
+        })
     }
 )
 

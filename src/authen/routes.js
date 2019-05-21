@@ -12,7 +12,6 @@ const { validate_token } = require('../middleware/token');
 router.post("/register",
     Regist.register(),
     (req, res) => {
-
         res.status(200).json({ success: req.success, message: req.message })
 
     })
@@ -90,6 +89,13 @@ router.post('/lineNoti',
     }
 )
 
+router.get('/profile',
+    validate_token(),
+    Regist.getProfile(),
+    (req, res) => {
+        res.status(200).json({ success: req.success, result: req.result })
+    }
+)
 
 
 

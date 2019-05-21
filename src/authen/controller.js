@@ -80,14 +80,8 @@ const encrypted = async (password, res) => {
 
 /*####################### CONTROLLER #######################*/
 const register = () => async (req, res, next) => {
-
   try {
-
-
-
     let checkUser = await authenModel.checkUsername(req.body.username)
-    console.log(checkUser[0].length)
-    //console.log(checkUser)
     if (checkUser[0].length != 0) {
       req.success = false;
       req.message = "username นี้ถูกใช้ไปแล้ว";
@@ -303,18 +297,22 @@ const setNewpassword = () => async (req, res, next) => {
 
 }
 const lineNoti = () => async (req, res, next) => {
-
   await line.Noti('message send');
   await log.log('error1', 'contrller.js');
   next();
-
 }
 
-
-
-
-
-
+const getProfile = () => async (req, res, next) => {
+  try {
+    let result = await authenModel.getProfile(req.user_id);
+    req.success = true;
+    req.result = result[0];
+    next();
+  } catch (error) {
+    console.log(error)
+    res.status(401).json({ success: false })
+  }
+}
 
 module.exports = {
   contro: contro,
@@ -327,7 +325,8 @@ module.exports = {
   verifyForgetpass,
   checkTokenverify,
   setNewpassword,
-  lineNoti
+  lineNoti,
+  getProfile
 
 
 }

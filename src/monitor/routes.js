@@ -17,20 +17,33 @@ router.post("/save_screen",
         res.status(200).json({ success: true })
     })
 
-router.post('/screentime', 
+router.post('/screentime',
     monitor.screentime(),
-(req,res) => {
-    res.status(200).json({ success: req.success, message: req.message })
-})
+    (req, res) => {
+        res.status(200).json({ success: req.success, message: req.message })
+    })
 
 
 
 router.post('/battery',
-   // validate_token(),
+    // validate_token(),
     monitor.bettery(),
     (req, res) => {
         console.log(req.body)
-        res.status(200).json({ success: true });
+        res.status(200).json({ success: req.success });
+    }
+)
+
+router.post('/insert/internet',
+    monitor.network(),
+    (req, res) => {
+        res.status(200).json({ success: req.success });
+    }
+)
+router.post('/insert/showusage',
+    monitor.showinternetusage(),
+    (req, res) => {
+        res.status(200).json({ success: req.success });
     }
 )
 

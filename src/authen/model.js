@@ -106,6 +106,12 @@ class authenModel {
         console.log(username);
         return knex.raw(`DELETE FROM tb_verify WHERE username = '${username}' `)
     }
+
+    async getProfile(user_id) {
+        return knex('tbl_user')
+            .select('user_id', 'username', 'firstname', 'lastname', 'tel', 'typeRegis')
+            .where({ user_id });
+    }
 }
 
 module.exports = new authenModel();

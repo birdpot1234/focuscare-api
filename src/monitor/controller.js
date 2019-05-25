@@ -26,17 +26,36 @@ const screentime = () => async (req, res, next) => {
     res.status(401).json({ success: false, error })
   }
 }
+function converDate(d, format, platform) {
+  if (platform === 'ios') {
+    d.replace('0000', '');
+    return moment(d, 'YYYY-MM-DD HH:mm:ss').add(7, 'h').format(format)
+  } else {
+    return moment(new Date(d)).format(format)
+  }
+}
 const bettery = () => async (req, res, next) => {
-  //let {userId,uniqID,date_openScreen,time_openScreen,date_closeScreen,time_closeScreen} = req.body
-  console.log(req.body)
+  const { charge_on, charge_off, percentage } = req.body;
+  let obj = {
+    userId: req.user_id,
+    uniqueID: req.uniqueID,
+    date_openCharge: moment(new Date(charge_on)).format('YYYY-MM-DD'),
+    time_openCharge: moment(new Date(charge_on)).format('HH:mm:ss'),
+    date_closeCharge: moment(new Date(charge_off)).format('YYYY-MM-DD'),
+    time_closeCharge: moment(new Date(charge_off)).format('HH:mm:ss'),
+    batteryPercen: Math.floor(percentage)
+  }
   try {
 
-    await screenModel.bettery_Insert(req.body)
-    req.success = true
+    await screenModel.bettery_Insert(obj)
+    req.success = true;
+    req.message = "ส่งข้อมูลการใช้งาน Battery สำเร็จ"
+    next();
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    res.status(401).json({ success: false, error })
   }
-  next()
+
 }
 const network = () => async (req, res, next) => {
 
@@ -59,4 +78,34 @@ const network = () => async (req, res, next) => {
   }
   next();
 
+}
+const showinternetusage = () => async (req, res, next) => {
+  let { userId, uniqueID, date } = req.body
+  let resoult
+  try {
+
+    resoult = await screenModel.showinternetusage(userId, uniqueID, date)
+    //resoult = arrayformat.Row(resoult)
+    // let a = await setformatenetwork(resoult)
+
+    console.log(resoult)
+    req.success = resoult
+    req.shatus = 200
+  } catch (error) {
+
+    req.success = error
+    req.shatus = 200
+  }
+  next();
+}
+
+
+const getRandomInt = (max) => {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+module.exports = {
+  screentime,
+  bettery,
+  network,
+  showinternetusage
 }

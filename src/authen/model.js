@@ -34,7 +34,7 @@ class authenModel {
     async registerDplus(data, password) {
         let date = moment().format("YYYY-MM-DD");
         let datetime = moment().local('th').format("YYYY-MM-DD HH:mm:ss");
-        let user_id = moment().unix();
+        let user_id = moment().unix();  
         let varluetb = {
             user_id: user_id,
             ...data,
@@ -73,11 +73,13 @@ class authenModel {
 
     async verify(username) {
         console.log(username)
-        let respon = await knex.raw(`select * from tbl_user where username='${username}' AND typeRegis=99`);
-        console.log('verify', respon[0].length);
-        if (respon[0].length > 0) {
-            return knex.raw(`update tbl_user set active=1, typeRegis=0 where username = '${username}' AND typeRegis=99`)
-        } else {
+        let respon = await knex.raw(`select * from tbl_user where username= '${username}' AND typeRegis =0`)
+        if (respon) {
+            console.log(respon)
+            return knex.raw(`update tbl_user set active =1,typeRegis =0 where username = '${username}'`)
+
+        }
+        else {
             return 500
         }
 

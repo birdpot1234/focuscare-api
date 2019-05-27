@@ -35,4 +35,17 @@ router.post('/battery',
     }
 )
 
+router.post('/insert/internet',
+    monitor.network(),
+    (req, res) => {
+        res.status(200).json({ success: req.success });
+    }
+)
+router.post('/insert/showusage',
+    monitor.showinternetusage(),
+    (req, res) => {
+        res.status(200).json({ success: req.success });
+    }
+)
+
 module.exports = router;

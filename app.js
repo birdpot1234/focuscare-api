@@ -23,7 +23,7 @@ app.use(cors(corsOption));
 app.use(cookie({
     name: constant.name,
     keys: [constant.key],
-    maxAge: 8 * 60 * 60 * 1000,
+    maxAge: 60 * 24 * 60 * 60 * 1000,
     cookie: {
         httpOnly: true,
         secure: true

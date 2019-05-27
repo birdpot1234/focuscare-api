@@ -1,7 +1,4 @@
-const { server_response } = require("../../service")
-const knex = require('../../connect')
 const screenModel = require('./model')
-const momentRandom = require('moment-random');
 const moment = require('moment');
 const arrayformat = require('../middleware/other');
 
@@ -34,6 +31,7 @@ function converDate(d, format, platform) {
     return moment(new Date(d)).format(format)
   }
 }
+
 const bettery = () => async (req, res, next) => {
   const { charge_on, charge_off, percentage } = req.body;
   let obj = {
@@ -58,7 +56,6 @@ const bettery = () => async (req, res, next) => {
 
 }
 const network = () => async (req, res, next) => {
-
   let data = {
     userId: req.body.userId,
     uniqueID: req.body.uniqueID,
@@ -69,7 +66,6 @@ const network = () => async (req, res, next) => {
   }
 
   try {
-
     await screenModel.internetUsage(data)
     req.success = true
   } catch (error) {
@@ -77,8 +73,8 @@ const network = () => async (req, res, next) => {
     req.success = false
   }
   next();
-
 }
+
 const showinternetusage = () => async (req, res, next) => {
   let { userId, uniqueID, date } = req.body
   let resoult

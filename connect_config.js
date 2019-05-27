@@ -17,7 +17,7 @@ const dbConnectData_focusCare = {
     connection: {
         user: 'mobileapp',
         password: 'Mobile_1234',
-        host: '13.229.199.200', // You can use 'localhost\\instance' to connect to named instance
+        host: '3.1.148.52', // You can use 'localhost\\instance' to connect to named instance
         database: 'focusCare_dev'
     }
 }

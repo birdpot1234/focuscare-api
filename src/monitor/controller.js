@@ -81,10 +81,6 @@ const showinternetusage = () => async (req, res, next) => {
   try {
 
     resoult = await screenModel.showinternetusage(userId, uniqueID, date)
-    //resoult = arrayformat.Row(resoult)
-    // let a = await setformatenetwork(resoult)
-
-    console.log(resoult)
     req.success = resoult
     req.shatus = 200
   } catch (error) {
@@ -99,9 +95,33 @@ const showinternetusage = () => async (req, res, next) => {
 const getRandomInt = (max) => {
   return Math.floor(Math.random() * Math.floor(max));
 }
+const showscreentimeusage = () => async (req, res, next) => {
+  let { uniqueID, date } = req.body
+  let result_screen, result_battery
+  let arr = []
+  try {
+    result_screen = await screenModel.showscreentimeusage(uniqueID, date)
+    result_battery = await screenModel.showbatteryusage(uniqueID, date)
+
+    result_screen = arrayformat.Row(result_screen)
+    result_battery = arrayformat.Row(result_battery)
+
+    arr = [...result_screen, ...result_battery]
+
+    console.log(arr)
+    req.result = arr
+    req.status = 200
+  } catch (error) {
+    req.result = []
+    req.status = 401
+  }
+  next();
+}
+
 module.exports = {
   screentime,
   bettery,
   network,
-  showinternetusage
+  showinternetusage,
+  showscreentimeusage,
 }

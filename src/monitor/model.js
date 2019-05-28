@@ -30,7 +30,7 @@ class monitorModel {
         order by time_openCharge `)
     }
     async showmainscreen_all(uniqueid) {
-        return knex.raw(`select sum((TIMEDIFF(time_closeScreen,time_openScreen))) as summary_screen from tbl_screentime 
+        return knex.raw(`select sum(TIME_TO_SEC(TIMEDIFF(time_closeScreen,time_openScreen))) as summary_screen from tbl_screentime 
         where  uniqueID='${uniqueid}'`)
     }
     async shownetwork_all(uniqueid) {

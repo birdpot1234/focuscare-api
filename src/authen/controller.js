@@ -186,7 +186,7 @@ const login = () => async (req, res, next) => {
 
   // generate token
   if (req.success) {
-    req.token = jsonwebtoken.sign(objToken, constant.sign, { expiresIn: '8h' });
+    req.token = jsonwebtoken.sign(objToken, constant.sign, { expiresIn: '60d' });
     req.session.token = req.token;
   }
   next();

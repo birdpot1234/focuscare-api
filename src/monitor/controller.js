@@ -99,7 +99,7 @@ const showscreentimeusage = () => async (req, res, next) => {
   let { uniqueID, date } = req.body
   let result_screen, result_battery
   let arr = []
-  let b = []
+
   try {
     result_screen = await screenModel.showscreentimeusage(uniqueID, date)
     result_battery = await screenModel.showbatteryusage(uniqueID, date)
@@ -126,6 +126,29 @@ const showscreentimeusage = () => async (req, res, next) => {
   }
   next();
 }
+const showmainscreen_all = () => async (req, res, next) => {
+  let { uniqueID } = req.body
+  let summary_screen, summary_battery, summary_mobile
+  let arr = []
+  let arrbat = {}
+  try {
+    summary_screen = await screenModel.showmainscreen_all(uniqueID)
+    summary_mobile = await screenModel.shownetwork_all(uniqueID)
+    summary_battery = await screenModel.showbattery_all(uniqueID)
+
+    arr = arrayformat.formate(summary_screen, summary_mobile, summary_battery)
+
+    req.success = true
+    req.result = arr
+    req.status = 200
+  } catch (error) {
+    console.log(error)
+    req.success = false
+    req.result = []
+    req.status = 401
+  }
+  next()
+}
 
 
 module.exports = {
@@ -134,4 +157,5 @@ module.exports = {
   network,
   showinternetusage,
   showscreentimeusage,
+  showmainscreen_all
 }

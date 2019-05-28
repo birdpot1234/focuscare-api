@@ -50,7 +50,13 @@ router.post('/insert/showusage',
 router.post('/main/screentimeusage',
     monitor.showscreentimeusage(),
     (req, res) => {
-        res.status(200).json({ result: req.result });
+        res.status(200).json({ result: req.result, success: req.success });
+    }
+)
+router.post('/main/screentimeusage_all',
+    monitor.showmainscreen_all(),
+    (req, res) => {
+        res.status(200).json({ result: req.result, success: req.success });
     }
 )
 module.exports = router;

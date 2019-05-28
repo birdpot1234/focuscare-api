@@ -29,6 +29,20 @@ class monitorModel {
         where uniqueID='${uniqueid}' AND date_openCharge ='${date}' GROUP BY  date_openCharge,time_openCharge,TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge)),beforeCharge,afterCharge
         order by time_openCharge `)
     }
+    async showmainscreen_all(uniqueid) {
+        return knex.raw(`select sum((TIMEDIFF(time_closeScreen,time_openScreen))) as summary_screen from tbl_screentime 
+        where  uniqueID='${uniqueid}'`)
+    }
+    async shownetwork_all(uniqueid) {
+        return knex.raw(`select sum(MobileValue) as summary_mobile from tbl_network 
+        where  uniqueID='${uniqueid}'`)
+    }
+    async showbattery_all(uniqueid) {
+        return knex.raw(`select sum(TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge))) as time, COUNT(battery_id) as count from tbl_battery
+        where uniqueID='${uniqueid}'`)
+
+    }
+
 
 }
 

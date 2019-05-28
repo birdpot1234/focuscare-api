@@ -25,8 +25,8 @@ class monitorModel {
 
     }
     async showbatteryusage(uniqueid, date) {
-        return knex.raw(`select date_openCharge as date,time_openCharge as time_start,TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge)) as time_usage,'battery' as type from tbl_battery
-        where uniqueID='${uniqueid}' AND date_openCharge ='${date}' GROUP BY  date_openCharge,time_openCharge,TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge))
+        return knex.raw(`select date_openCharge as date,time_openCharge as time_start,TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge)) as time_usage,'battery' as type,beforeCharge,afterCharge from tbl_battery
+        where uniqueID='${uniqueid}' AND date_openCharge ='${date}' GROUP BY  date_openCharge,time_openCharge,TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge)),beforeCharge,afterCharge
         order by time_openCharge `)
     }
 

@@ -99,6 +99,7 @@ const showscreentimeusage = () => async (req, res, next) => {
   let { uniqueID, date } = req.body
   let result_screen, result_battery
   let arr = []
+  let b = []
   try {
     result_screen = await screenModel.showscreentimeusage(uniqueID, date)
     result_battery = await screenModel.showbatteryusage(uniqueID, date)
@@ -106,17 +107,26 @@ const showscreentimeusage = () => async (req, res, next) => {
     result_screen = arrayformat.Row(result_screen)
     result_battery = arrayformat.Row(result_battery)
 
-    arr = [...result_screen, ...result_battery]
 
-    console.log(arr)
+    arr = [...result_screen, ...result_battery]
+    arr.sort(function (a, b) {
+
+      if (a.time_start < b.time_start) { return -1; }
+      if (a.time_start > b.time_start) { return 1; }
+      return 0;
+    });
+
+    req.success = true
     req.result = arr
     req.status = 200
   } catch (error) {
+    req.success = false
     req.result = []
     req.status = 401
   }
   next();
 }
+
 
 module.exports = {
   screentime,

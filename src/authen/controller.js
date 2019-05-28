@@ -166,7 +166,6 @@ const login = () => async (req, res, next) => {
         req.success = true;
         req.user_id = user_id;
         req.fullname = `${req.body.firstname} ${req.body.lastname}`;
-        console.log(req.fullname)
         req.message = "เข้าสู่ระบบสำเร็จ";
       } else {
         delete req.body.uniqueID

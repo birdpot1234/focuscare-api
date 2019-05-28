@@ -34,7 +34,7 @@ class authenModel {
     async registerDplus(data, password) {
         let date = moment().format("YYYY-MM-DD");
         let datetime = moment().local('th').format("YYYY-MM-DD HH:mm:ss");
-        let user_id = moment().unix();  
+        let user_id = moment().unix();
         let varluetb = {
             user_id: user_id,
             ...data,
@@ -56,6 +56,7 @@ class authenModel {
         //return knex.raw(`select * from tbl_user where (typeRegis =0 OR typeRegis =99) AND (username = '${username}')`)
     }
 
+    /** ไม่ได้ใช้แล้ว */
     async updateToken({ token, tokennoti, user_id }) {
         let obj = {
             tokenLogin: token,

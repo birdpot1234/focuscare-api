@@ -18,7 +18,6 @@ router.post("/register",
 
 router.post('/login',
     Regist.login(),
-    Regist.updateToken(),
     (req, res) => {
         res.status(200).json({
             success: req.success,

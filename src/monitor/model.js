@@ -37,6 +37,10 @@ class monitorModel {
         return knex.raw(`select sum(MobileValue) as summary_mobile from tbl_network 
         where  uniqueID='${uniqueid}'`)
     }
+    async shownetwork_all_bydate(uniqueid, date) {
+        return knex.raw(`select sum(MobileValue) as mobileValue, SUM(wifiValue) as wifiValue from tbl_network 
+        where  uniqueID='${uniqueid}' AND date='${date}'`)
+    }
     async showbattery_all(uniqueid) {
         return knex.raw(`select sum(TIME_TO_SEC(TIMEDIFF(time_closeCharge,time_openCharge))) as time, COUNT(battery_id) as count from tbl_battery
         where uniqueID='${uniqueid}'`)

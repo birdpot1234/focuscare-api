@@ -59,4 +59,10 @@ router.post('/main/screentimeusage_all',
         res.status(200).json({ result: req.result, success: req.success });
     }
 )
+router.post('/main/testshowallnetwork',
+    monitor.testshowallnetwork(),
+    (req, res) => {
+        res.status(200).json({ result: req.result, success: req.success });
+    }
+)
 module.exports = router;

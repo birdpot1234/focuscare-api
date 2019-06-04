@@ -42,6 +42,9 @@ class monitorModel {
         where uniqueID='${uniqueid}'`)
 
     }
+    async showallnetwork(uniqueid) {
+        return knex.raw(`select * from tbl_network where uniqueID ='${uniqueid}'`)
+    }
 
 
 }

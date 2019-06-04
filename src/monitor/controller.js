@@ -149,7 +149,26 @@ const showmainscreen_all = () => async (req, res, next) => {
   }
   next()
 }
+const testshowallnetwork = () => async (req, res, next) => {
+  let { uniqueID } = req.body
+  let result_screen
+  try {
+    result_screen = await screenModel.showallnetwork(uniqueID)
+    result_screen = arrayformat.Row(result_screen)
 
+
+
+    req.success = true
+    req.result = result_screen
+    req.status = 200
+  } catch (error) {
+    console.log(error)
+    req.success = false
+    req.result = []
+    req.status = 401
+  }
+  next()
+}
 
 module.exports = {
   screentime,
@@ -157,5 +176,6 @@ module.exports = {
   network,
   showinternetusage,
   showscreentimeusage,
-  showmainscreen_all
+  showmainscreen_all,
+  testshowallnetwork
 }

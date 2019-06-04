@@ -38,7 +38,7 @@ router.post('/battery',
 router.post('/insert/internet',
     monitor.network(),
     (req, res) => {
-        res.status(200).json({ success: req.success });
+        res.status(req.status).json({ success: req.success });
     }
 )
 router.post('/insert/showusage',

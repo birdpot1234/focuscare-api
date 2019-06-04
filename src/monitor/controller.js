@@ -68,8 +68,10 @@ const network = () => async (req, res, next) => {
   try {
     await screenModel.internetUsage(data)
     req.success = true
+    req.status = 200
   } catch (error) {
     console.log(error)
+    req.status = 500
     req.success = false
   }
   next();

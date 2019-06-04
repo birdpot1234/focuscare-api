@@ -79,7 +79,7 @@ const showinternetusage = () => async (req, res, next) => {
   let { userId, uniqueID, date } = req.body
   let resoult
   try {
-
+    console.log(userId, uniqueID, date)
     resoult = await screenModel.showinternetusage(userId, uniqueID, date)
     req.success = resoult
     req.shatus = 200
@@ -97,16 +97,17 @@ const getRandomInt = (max) => {
 }
 const showscreentimeusage = () => async (req, res, next) => {
   let { uniqueID, date } = req.body
-  let result_screen, result_battery
+  let result_screen, result_battery, result_network
   let arr = []
 
   try {
     result_screen = await screenModel.showscreentimeusage(uniqueID, date)
     result_battery = await screenModel.showbatteryusage(uniqueID, date)
+    result_network = await screenModel.shownetwork_all_bydate('11111111', date);
 
     result_screen = arrayformat.Row(result_screen)
     result_battery = arrayformat.Row(result_battery)
-
+    result_network = arrayformat.Row(result_network);
 
     arr = [...result_screen, ...result_battery]
     arr.sort(function (a, b) {
@@ -118,6 +119,7 @@ const showscreentimeusage = () => async (req, res, next) => {
 
     req.success = true
     req.result = arr
+    req.network = result_network[0];
     req.status = 200
   } catch (error) {
     req.success = false

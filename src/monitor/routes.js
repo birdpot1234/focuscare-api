@@ -50,7 +50,7 @@ router.post('/insert/showusage',
 router.post('/main/screentimeusage',
     monitor.showscreentimeusage(),
     (req, res) => {
-        res.status(200).json({ result: req.result, success: req.success });
+        res.status(200).json({ result: req.result, success: req.success, network: req.network });
     }
 )
 router.post('/main/screentimeusage_all',
